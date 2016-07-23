@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from s3_helpers import *
 from get_rank_for_state_plan import *
 from get_click_data import *
+from query_characterizer import *
 import traceback, pickle, time
 import numpy as np
 

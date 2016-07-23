@@ -33,6 +33,7 @@ def get_click_data():
         p_click = [c['plan_id'] for c in np.sort(np.array(clicks, dtype=click_type), order=['epoch'])]
         # check timestamp block for page, then sort on score to get plan order
         plans = np.sort(np.array(plans, dtype=plan_type), order=['epoch'])
+        print plans
         pages, p_rank = np.zeros(len(plans)), []
         for i in range(1, len(plans)):
             pages[i] = pages[i-1] if plans[i]['epoch']-plans[i-1]['epoch']<page_interval else pages[i-1]+1

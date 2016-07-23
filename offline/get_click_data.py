@@ -25,7 +25,7 @@ def get_click_data():
         for r in rank:
             _r = r.split(',')
             _r[1] = datetime.strptime(_r[1],'%Y-%m-%d %H:%M:%S.%f')
-            _r[2] = -float(_r[2])
+            _r[2] = -float(_r[2]) # take minus so ascending sort works
             plans.append(tuple(_r))
         for c in click:
             _c = c.split(',')
@@ -40,7 +40,7 @@ def get_click_data():
         for i in range(1, len(plans)):
             pages[i] = pages[i-1] if (plans[i]['ts']-plans[i-1]['ts']).total_seconds()<page_interval else pages[i-1]+1
         for pg in np.unique(pages):
-            p_rank += [pl['plan_id'] for pl in np.sort(plans[pages==pg], order=['score','ts'])] # epoch order in question
+            p_rank += [pl['plan_id'] for pl in np.sort(plans[pages==pg], order=['score','ts'])]
         # assemble the query info
         click_rtn.append((state, health, p_rank, p_click))
     # close connection and return

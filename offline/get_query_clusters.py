@@ -11,7 +11,7 @@ def get_query_clusters(points, k):
     # get similarity matrix (cosine distance)
     dist = points.dot(points.T)
     # initialize variables
-    n_pt = len(points)
+    n_pt = points.shape[0]
     cluster_old, cluster_new = np.ones(n_pt), np.zeros(n_pt)
     # special case, no clustering
     if k==1 or n_pt==1:

@@ -24,11 +24,11 @@ def extract_plan_feature(plan_col, plan_ids, log):
         fea_mat.append(plan_feature)
         log.trace('complete for %d plans' %(len(plan_feature)))
 
-    log.trace('get formulary summary feature for each plan')
-    plan_sumstat = {p['plan']:[p['avg_copay'],p['avg_ci_rate'],p['count']] for p in getFormularyAggregate(plan_col, plan_ids)}
-
-    if plan_sumstat:
-        fea_mat.append(plan_sumstat)
-        log.trace('complete for %d plans' %(len(plan_sumstat)))
+    # log.trace('get formulary summary feature for each plan')
+    # plan_sumstat = {p['plan']:[p['avg_copay'],p['avg_ci_rate'],p['count']] for p in getFormularyAggregate(plan_col, plan_ids)}
+    #
+    # if plan_sumstat:
+    #     fea_mat.append(plan_sumstat)
+    #     log.trace('complete for %d plans' %(len(plan_sumstat)))
 
     return fea_mat

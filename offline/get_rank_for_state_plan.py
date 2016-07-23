@@ -1,4 +1,3 @@
-from sets import Set
 from scipy.sparse import *
 from sklearn import svm
 import pickle, glob
@@ -16,7 +15,7 @@ def get_rank_for_state_plan(query_cluster, click_data):
     '''
     s3loader = s3_helper()
     # get state info from click data
-    state_ids = list(Set(s[5:7] for j in click_data for s in j[0]))
+    state_ids = list(set(s[5:7] for j in click_data for s in j[0]))
     state = state_ids[0]
     if len(state_ids) > 1:
         print 'warning: click data has plans from multiple states, training for ' + state

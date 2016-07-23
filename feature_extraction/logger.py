@@ -16,13 +16,13 @@ class logger:
         self.log.close()
 
     def trace(self, msg):
-        self.log.write('%s: DEBUG - %s\n' %(datetime.now().strftime('%Y%m%d%H%M%S'), msg))
+        self.log.write('%s: DEBUG - %s\n' %(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), msg))
 
     def warning(self, msg):
-        self.log.write('%s: WARNING - %s\n' %(datetime.now().strftime('%Y%m%d%H%M%S'), msg))
+        self.log.write('%s: WARNING - %s\n' %(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), msg))
 
     def error(self, msg):
-        self.log.write('%s: ERROR - %s\n' %(datetime.now().strftime('%Y%m%d%H%M%S'), msg))
+        self.log.write('%s: ERROR - %s\n' %(datetime.now().strftime('%Y-%m-%d %H:%M:%S'), msg))
 
     def log_handler(self):
         return self.log

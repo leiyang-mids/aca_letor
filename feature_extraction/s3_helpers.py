@@ -31,6 +31,7 @@ class s3_helper:
         upload plan rank for query clusters
         '''
         self.bucket.upload_file(key, key)
+        self.set_public(key)
 
     def upload2(self, src, des):
         self.bucket.upload_file(src, des)

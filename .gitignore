@@ -1,2 +1,6 @@
 
 *.pyc
+
+*.pickle
+
+*.txt

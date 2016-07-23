@@ -1,12 +1,12 @@
 insert into queries values ('29877693-64e9-4137-b807-83bd7e173bfb','SC','50','12345','high blood pressure','2016-07-21 05:55:10.108561');
 insert into queries values ('780de064-0faf-42bd-9690-8b4217907e7b','FL','60','99999','diabetes','2016-07-21 05:56:16.061868');
-insert into clicks values ('29877693-64e9-4137-b807-83bd7e173bfb','9962','2016-07-21 05:55:32.756673');
-insert into clicks values ('29877693-64e9-4137-b807-83bd7e173bfb','9976','2016-07-21 05:55:35.593141');
 insert into clicks values ('29877693-64e9-4137-b807-83bd7e173bfb','1063','2016-07-21 05:55:39.40232');
+insert into clicks values ('29877693-64e9-4137-b807-83bd7e173bfb','9962','2016-07-21 05:55:32.756673');
 insert into clicks values ('29877693-64e9-4137-b807-83bd7e173bfb','8500','2016-07-21 05:55:57.582243');
+insert into clicks values ('29877693-64e9-4137-b807-83bd7e173bfb','9976','2016-07-21 05:55:35.593141');
+insert into clicks values ('780de064-0faf-42bd-9690-8b4217907e7b','7821','2016-07-21 05:56:40.556035');
 insert into clicks values ('780de064-0faf-42bd-9690-8b4217907e7b','7830','2016-07-21 05:56:23.737326');
 insert into clicks values ('780de064-0faf-42bd-9690-8b4217907e7b','4720','2016-07-21 05:56:38.045305');
-insert into clicks values ('780de064-0faf-42bd-9690-8b4217907e7b','7821','2016-07-21 05:56:40.556035');
 insert into ranks values ('29877693-64e9-4137-b807-83bd7e173bfb','1249','1','2016-07-21 05:55:11.950646');
 insert into ranks values ('29877693-64e9-4137-b807-83bd7e173bfb','855','1','2016-07-21 05:55:11.985851');
 insert into ranks values ('29877693-64e9-4137-b807-83bd7e173bfb','948','1','2016-07-21 05:55:12.013161');

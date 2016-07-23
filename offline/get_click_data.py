@@ -15,17 +15,17 @@ def get_click_data():
     cur.execute(sql_exe)
     records = cur.fetchall()
     # define data type
-    plan_type = [('plan_id',str), ('epoch',float), ('score',float)]
-    click_type = [('plan_id',str), ('epoch',float)]
+    plan_type = [('plan_id','S16'), ('epoch',float), ('score',float)]
+    click_type = [('plan_id','S16'), ('epoch',float)]
     click_rtn = []
     for sid, state, health, click, rank in records:
         # get plan ranks and clicks, and parse out timestamp
         plans, clicks = [], []
-        for r in rank.split('|'):
+        for r in rank:
             _r = r.split(',')
             _r[1] = time.mktime(time.strptime(_r[1],'%Y-%m-%d %H:%M:%S.%f'))
             plans.append(tuple(_r))
-        for c in clicks.split('|'):
+        for c in click:
             _c = c.split(',')
             _c[1] = time.mktime(time.strptime(_c[1],'%Y-%m-%d %H:%M:%S.%f'))
             clicks.append(tuple(_c))
@@ -43,5 +43,9 @@ def get_click_data():
     # close connection and return
     cur.close()
     conn.close()
-    rtn_type = [('state',str), ('query',str), ('ranks',list), ('clicks',list)]
+    rtn_type = [('state','S2'), ('query','S512'), ('ranks',list), ('clicks',list)]
     return np.array(click_rtn, dtype=rtn_type)
+
+    
+if __name__ == "__main__":
+	get_click_data()

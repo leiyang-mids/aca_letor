@@ -37,7 +37,7 @@ def get_click_data():
         for i in range(1, len(plans)):
             pages[i] = pages[i-1] if plans[i]['epoch']-plans[i-1]['epoch']<page_interval else pages[i-1]+1
         for pg in np.unique(pages):
-            p_rank += [pl['plan_id'] for pl in np.sort(plans[pages==pg], order=['score','epoch'])[::-1]] # epoch order in question
+            p_rank += [pl['plan_id'] for pl in np.sort(plans[pages==pg], order=['score'])[::-1]] # epoch order in question
         # assemble the query info
         click_rtn.append((state, health, p_rank, p_click))
     # close connection and return
@@ -46,6 +46,6 @@ def get_click_data():
     rtn_type = [('state','S2'), ('query','S512'), ('ranks',list), ('clicks',list)]
     return np.array(click_rtn, dtype=rtn_type)
 
-    
+
 if __name__ == "__main__":
 	get_click_data()

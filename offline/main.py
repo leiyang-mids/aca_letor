@@ -19,12 +19,12 @@ def main():
 				time.sleep((next_run-datetime.now()).seconds)
 				continue
 			# main procedure starts here
-			print 'get query and click data '
+			print 'get query and click data'
 			click_data = get_click_data()
 			for state in np.unique(click_data['state']):
 				s_rows = click_data[click_data['state']==state]
 				print 'characterize queries for the state'
-				q_cluster, q_characterizer, centroids = query_characterizer(s_rows)
+				q_cluster, q_characterizer, centroids = query_characterizer(s_rows['query'])
 				print 'run letor training for the state'
 				letor_rank = get_rank_for_state_plan(q_cluster, np.array([[r['ranks'],r['clicks']] for r in s_rows]))
 				print 'save result on s3, for ES indexing'

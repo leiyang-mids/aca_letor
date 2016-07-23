@@ -12,7 +12,7 @@ def main():
 	'''
 	'''
 	next_run, hour, minute = datetime.now(), 5, 10
-	global s3clnt, log = s3_helper(), logger('training')
+	# global s3clnt, log = s3_helper(), logger('training')
 
 	while True:
 		try:
@@ -33,8 +33,8 @@ def main():
 				with open(save_name, 'w') as f:
 					pickle.dump([plans, letor_rank], f)
 				s3clnt.delete_by_state('training/%s' %state)
-	            s3clnt.upload(save_name)
-	            s3clnt.set_public(save_name)
+				s3clnt.upload(save_name)
+	            # s3clnt.set_public(save_name)
 			# training completed, get next run time
 			next_run = datetime.now() + timedelta(hours=hour)
 			print 'training has completed, next run time is %s' %str(next_run)

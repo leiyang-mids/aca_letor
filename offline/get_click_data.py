@@ -1,5 +1,6 @@
-import psycopg2, time
+import psycopg2
 import numpy as np
+from datetime import datetime
 
 def get_click_data():
     '''
@@ -15,28 +16,28 @@ def get_click_data():
     cur.execute(sql_exe)
     records = cur.fetchall()
     # define data type
-    plan_type = [('plan_id','S16'), ('epoch',float), ('score',float)]
-    click_type = [('plan_id','S16'), ('epoch',float)]
+    plan_type = [('plan_id','S16'), ('ts',datetime), ('score',float)]
+    click_type = [('plan_id','S16'), ('ts',datetime)]
     click_rtn = []
     for sid, state, health, click, rank in records:
         # get plan ranks and clicks, and parse out timestamp
         plans, clicks = [], []
         for r in rank:
             _r = r.split(',')
-            _r[1] = time.mktime(time.strptime(_r[1],'%Y-%m-%d %H:%M:%S.%f'))
+            _r[1] = datetime.strptime(_r[1],'%Y-%m-%d %H:%M:%S.%f')
             plans.append(tuple(_r))
         for c in click:
             _c = c.split(',')
-            _c[1] = time.mktime(time.strptime(_c[1],'%Y-%m-%d %H:%M:%S.%f'))
+            _c[1] = datetime.strptime(_c[1],'%Y-%m-%d %H:%M:%S.%f')
             clicks.append(tuple(_c))
         # sort timestamp to get click order
-        p_click = [c['plan_id'] for c in np.sort(np.array(clicks, dtype=click_type), order=['epoch'])]
+        p_click = [c['plan_id'] for c in np.sort(np.array(clicks, dtype=click_type), order=['ts'])]
         # check timestamp block for page, then sort on score to get plan order
-        plans = np.sort(np.array(plans, dtype=plan_type), order=['epoch'])
+        plans = np.sort(np.array(plans, dtype=plan_type), order=['ts'])
         print plans
         pages, p_rank = np.zeros(len(plans)), []
         for i in range(1, len(plans)):
-            pages[i] = pages[i-1] if plans[i]['epoch']-plans[i-1]['epoch']<page_interval else pages[i-1]+1
+            pages[i] = pages[i-1] if (plans[i]['ts']-plans[i-1]['ts']).total_seconds()<page_interval else pages[i-1]+1
         for pg in np.unique(pages):
             p_rank += [pl['plan_id'] for pl in np.sort(plans[pages==pg], order=['score'])[::-1]] # epoch order in question
         # assemble the query info

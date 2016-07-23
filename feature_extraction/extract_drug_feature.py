@@ -20,6 +20,7 @@ def extract_drug_feature(drug_col, plan_ids, log):
     if drug_coverage:
         fea_mat.append(drug_coverage)
         log.trace('complete for %d plans' %(len(drug_coverage)))
+        plan_ids = drug_coverage.keys()
 
     log.trace('get summary feature for drug')
     all_drug_states = getDrugAggregateAllStates(drug_col, plan_ids)
@@ -36,5 +37,6 @@ def extract_drug_feature(drug_col, plan_ids, log):
     if drug_sumstat:
         fea_mat.append(drug_sumstat)
         log.trace('complete for %d plans' %(len(drug_sumstat)))
+        plan_ids = drug_sumstat.keys()
 
-    return fea_mat
+    return fea_mat, plan_ids

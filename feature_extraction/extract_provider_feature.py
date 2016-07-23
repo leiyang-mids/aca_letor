@@ -20,6 +20,7 @@ def extract_provider_feature(prov_col, plan_ids, log):
     if provider_coverage:
         fea_mat.append(provider_coverage)
         log.trace('complete for %d plans' %(len(provider_coverage)))
+        plan_ids = provider_coverage.keys()
 
     log.trace('get summary feature for provider')
     all_provider_states = getProviderAllStates(prov_col, plan_ids)
@@ -36,5 +37,6 @@ def extract_provider_feature(prov_col, plan_ids, log):
     if provider_sumstat:
         fea_mat.append(provider_sumstat)
         log.trace('complete for %d plans' %(len(provider_sumstat)))
+        plan_ids = provider_sumstat.keys()
 
-    return fea_mat
+    return fea_mat, plan_ids

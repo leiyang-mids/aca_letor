@@ -1,9 +1,7 @@
 from datetime import datetime, timedelta
-from s3_helpers import *
-from get_rank_for_state_plan import *
 from get_click_data import *
-from query_characterizer import *
-import traceback, pickle, time
+from train_one_state import *
+import traceback, time
 import numpy as np
 
 from simulate_clicks import *
@@ -17,7 +15,7 @@ def main():
 	while True:
 
 		if datetime.now() < next_run:
-			time.sleep((next_run-datetime.now()).seconds)
+			time.sleep((next_run-datetime.now()).total_seconds())
 			continue
 		# get click-through data
 		try:
@@ -31,25 +29,7 @@ def main():
 		# train for each state
 		for state in np.unique(click_data['state']):
 			try:
-				s_rows = click_data[click_data['state']==state]
-				print 'characterize queries for the state'
-				q_cluster, q_characterizer, centroids = query_characterizer(s_rows['query'])
-				print 'run letor training for the state'
-				letor_rank, plans = get_rank_for_state_plan(q_cluster, np.array([[r['ranks'],r['clicks']] for r in s_rows]))
-				if not plans or not letor_rank:
-					print 'no feature file found for state %s, skip training.' %state
-					continue
-				print 'save ranking & online file on s3'
-				save_training = 'training/%s_%d.pickle' %(state, len(letor_rank))
-				with open(save_training, 'w') as f:
-					pickle.dump([plans, letor_rank], f)
-				s3clnt.delete_by_state('training/%s' %state)
-				s3clnt.upload(save_training)
-				save_online = 'online/%s_runtime.pickle' %state
-				with open(save_online, 'w') as f:
-					pickle.dump([q_characterizer, centroids], f)
-				s3clnt.delete_by_state('online/%s' %state)
-	            s3clnt.upload(save_online)
+				train_one_state(click_data, state)
 			except KeyboardInterrupt:
 				sys.exit('User termination')
 			except Exception as ex:

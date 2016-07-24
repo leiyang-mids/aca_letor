@@ -1,4 +1,5 @@
 from sklearn.preprocessing import normalize
+from scipy.sparse import vstack
 import numpy as np
 
 
@@ -30,7 +31,7 @@ def get_query_clusters(points, k):
             cid = 0 if sum(pid)==1 else np.argmax(np.sum(dist[np.ix_(pid, pid)], axis=1))
             centroids.append(points[pid][cid])
             in_dist.append(1 if sum(pid)==1 else np.mean(dist[np.ix_(pid,pid)][np.triu_indices(sum(pid),k=1)]))
-        centroids = np.array(centroids)
+        centroids = vstack(centroids)
         # traditional way to get new centroid, not working well for cosine distance
 #         centroids = normalize([np.mean(points[cluster_new==c], axis=0) for c in np.unique(cluster_new)])
 

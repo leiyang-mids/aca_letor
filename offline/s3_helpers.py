@@ -31,11 +31,32 @@ class s3_helper:
         upload plan rank for query clusters
         '''
         self.bucket.upload_file(key, key)
+        self.set_public(key)
 
-    def delete(self, key):
+    def upload2(self, src, des):
+        self.bucket.upload_file(src, des)
+        self.set_public(des)
+
+    def delete_by_key(self, key):
         for obj in self.bucket.objects.all():
             if obj.key == key: #'online/runtime_data_OR.pickle':
                 obj.delete()
+                return True
+        else:
+            print 'key %s not found' %key
+            return False
+
+    def delete_by_state(self, state):
+        for obj in self.bucket.objects.all():
+            if obj.key.startswith(state):
+                obj.delete()
+
+    def set_public(self, key):
+        '''
+        '''
+        for obj in self.bucket.objects.all():
+            if obj.key == key: # 'feature/SD_18_26728.pickle':
+                obj.Acl().put(ACL='public-read')
                 return True
         else:
             print 'key %s not found' %key

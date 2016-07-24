@@ -24,6 +24,8 @@ def get_rank_for_state_plan(query_cluster, click_data):
     state_pickle = glob.glob('feature/%s*.pickle' %state)
     if not state_pickle:
         state_pickle.append(s3loader.download_feature_pickle(state))
+        if not state_pickle[0]:
+            return None, None
         print 'downloaded feature pickle %s from s3' %state_pickle[0]
     if len(state_pickle) > 1:
         print 'warning: find multiple state feature pickles, using %s' %state_pickle[0]
@@ -66,4 +68,4 @@ def get_rank_for_state_plan(query_cluster, click_data):
         letor_rank.append((r_weight-r_min)/r_range)
 
     # save pickle in training data for ES indexing
-    return np.array(letor_rank)
+    return np.array(letor_rank), plans

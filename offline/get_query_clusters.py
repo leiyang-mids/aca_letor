@@ -16,7 +16,8 @@ def get_query_clusters(points, k):
     cluster_old, cluster_new = np.ones(n_pt), np.zeros(n_pt)
     # special case, no clustering
     if k==1 or n_pt==1:
-        return np.zeros(n_pt), 1 if n_pt==1 else np.mean(dist[np.triu_indices(n_pt,k=1)]), points[0]
+        cid = 0 if n_pt<3 else np.argmax(np.sum(dist, axis=1))
+        return np.zeros(n_pt), 1 if n_pt==1 else np.mean(dist[np.triu_indices(n_pt,k=1)]), points[cid]
     # randomly choose k starting centroids
     centroids = points[np.random.permutation(n_pt)[:k]]
     while not np.array_equal(cluster_old, cluster_new):

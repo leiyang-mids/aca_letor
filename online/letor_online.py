@@ -4,7 +4,7 @@ from sklearn.preprocessing import normalize
 import numpy as np
 
 class letor_online:
-    ''' runtime component for letor, give plan ranking for query
+    ''' runtime component for letor, give plan ranking weights for query
     '''
     characterizer = None
     centroids = None

@@ -1,5 +1,6 @@
 from sklearn.feature_extraction.text import CountVectorizer
 from get_query_clusters import *
+import numpy as np
 
 def query_characterizer(queries, similarity_limit = 0.9):
     '''
@@ -10,8 +11,8 @@ def query_characterizer(queries, similarity_limit = 0.9):
     characterizer = CountVectorizer()
     encoded_query = characterizer.fit_transform(queries)
     # set all values to 1 of encoded query (don't care duplicate terms in query)
-    for i in range(encoded_query.data.size):
-        encoded_query.data[i] = 1
+    encoded_query.data = np.ones(encoded_query.data.size)
+    
     # find the optimal clusters based on minimum within cluster distance
     avg_sim, k = 0, 0
     while avg_sim < similarity_limit:

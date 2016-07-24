@@ -1,4 +1,4 @@
-from sklearn.feature_extraction.text import *
+from sklearn.feature_extraction.text import CountVectorizer
 from get_query_clusters import *
 
 def query_characterizer(queries, similarity_limit = 0.9):

@@ -45,5 +45,4 @@ class letor_online:
             candidates = similarity == similarity.max()
 
         # weight vector for dot product
-        sum_sim = similarity[candidates].sum()
-        return [s/sum_sim if c else 0 for s,c in zip(similarity.toarray()[0],candidates.toarray()[0])]
+        return [s if c else 0 for s,c in zip(similarity.toarray()[0],candidates.toarray()[0])]

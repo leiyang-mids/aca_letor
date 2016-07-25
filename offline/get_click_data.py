@@ -2,11 +2,10 @@ import psycopg2
 import numpy as np
 from datetime import datetime
 
-def get_click_data():
+def get_click_data(log, page_interval = 1.5):
     '''
     '''
 
-    page_interval = 1.5
     conn = psycopg2.connect(database="w205", user="postgres", password="pass", host="localhost", port="5432")
     cur = conn.cursor()
 
@@ -34,14 +33,16 @@ def get_click_data():
         # sort timestamp to get click order
         p_click = [c['plan_id'] for c in np.sort(np.array(clicks, dtype=click_type), order=['ts'])]
         # check timestamp block for page, then sort on score to get plan order
-        plans = np.sort(np.array(plans, dtype=plan_type), order=['ts'])        
+        plans = np.sort(np.array(plans, dtype=plan_type), order=['ts'])
         pages, p_rank = np.zeros(len(plans)), []
         for i in range(1, len(plans)):
             pages[i] = pages[i-1] if (plans[i]['ts']-plans[i-1]['ts']).total_seconds()<page_interval else pages[i-1]+1
         for pg in np.unique(pages):
             p_rank += [pl['plan_id'] for pl in np.sort(plans[pages==pg], order=['score','ts'])]
         # assemble the query info
+        log.trace('%s - "%s" - ES ranks %s - clicks %s' %(state, health, str(p_rank), str(p_click)))
         click_rtn.append((state, health, p_rank, p_click))
+
     # close connection and return
     cur.close()
     conn.close()
@@ -49,5 +50,5 @@ def get_click_data():
     return np.array(click_rtn, dtype=rtn_type)
 
 
-if __name__ == "__main__":
-	get_click_data()
+# if __name__ == "__main__":
+# 	get_click_data()

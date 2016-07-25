@@ -5,7 +5,7 @@ import numpy as np
 from s3_helpers import *
 
 
-def get_rank_for_state_plan(query_cluster, click_data):
+def get_rank_for_state_plan(query_cluster, click_data, log):
     '''
     function     : train LETOR models for queries against one state
     query_cluster: list of [nx1] integers to indicate query cluster of one state
@@ -18,7 +18,7 @@ def get_rank_for_state_plan(query_cluster, click_data):
     state_ids = list(set(s[5:7] for j in click_data for s in j[0]))
     state = state_ids[0]
     if len(state_ids) > 1:
-        print 'warning: click data has plans from multiple states, training for ' + state
+        log.warning('click data has plans from multiple states, training for ' + state)
 
     # load feature data from S3 if no local copy is found
     state_pickle = glob.glob('feature/%s*.pickle' %state)
@@ -26,31 +26,31 @@ def get_rank_for_state_plan(query_cluster, click_data):
         state_pickle.append(s3loader.download_feature_pickle(state))
         if not state_pickle[0]:
             return None, None
-        print 'downloaded feature pickle %s from s3' %state_pickle[0]
+        log.trace('downloaded feature pickle %s from s3' %state_pickle[0])
     if len(state_pickle) > 1:
-        print 'warning: find multiple state feature pickles, using %s' %state_pickle[0]
+        log.warning('find multiple state feature pickles, using %s' %state_pickle[0])
 
     # testData = 'feature/UT_74_19243.pickle'
     # with open(testData) as f:
     with open(state_pickle[0]) as f:
         feature, plans = pickle.load(f)
     n_plan, n_fea = feature.shape
-    print 'load %d plans from feature data with dimension %d' %(n_plan, n_fea)
+    log.trace('load %d plans from feature data with dimension %d' %(n_plan, n_fea))
 
     # for each query cluster
-    print 'training started for %d query clusters' %(np.max(query_cluster)+1)
+    log.trace('training started for %d query clusters' %(np.max(query_cluster)+1))
     p_index = {p:plans.index(p) for p in plans}
     letor_rank = []
     for c in np.unique(query_cluster):
-        print '\ngetting training data from cluster %d with %d queries' %(c, sum(query_cluster==c))
+        log.trace('getting training data from cluster %d with %d queries' %(c, sum(query_cluster==c)))
         fea_mat, tgt_vec = [], []
         # assemble training points from its queries
         for q in click_data[query_cluster==c]:
             # loop through each click to get training pairs
             click_indice = [np.where(q[0]==p)[0][0] for p in q[1]]
-            print 'query has %d clicks' %(len(q[1]))
+            log.trace('query has %d clicks' %(len(q[1])))
             for c_index in click_indice:
-                print 'extracting feature for clicked plan %s' %q[0][c_index]
+                log.trace('extracting feature for clicked plan %s' %q[0][c_index])
                 # loop through all items before current clicked item
                 for i in range(c_index):
                     if i in click_indice:
@@ -58,10 +58,10 @@ def get_rank_for_state_plan(query_cluster, click_data):
                     fea_mat.append( (feature.getrow(p_index[q[0][c_index]]) - feature.getrow(p_index[q[0][i]]))
                                      if i%2==0 else (feature.getrow(p_index[q[0][i]]) - feature.getrow(p_index[q[0][c_index]])) )
                     tgt_vec.append((-1)**i)
-        print 'start training with %d pair features with %d +1' %(len(tgt_vec), sum(np.array(tgt_vec)==1))
+        log.trace('start training with %d pair features with %d +1' %(len(tgt_vec), sum(np.array(tgt_vec)==1)))
         clf = svm.SVC(kernel='linear', C=.2, max_iter=-1)
         clf.fit(vstack(fea_mat, format='csr'), tgt_vec)
-        print 'training completed, obtain plan ranking'
+        log.trace('training completed, obtain plan ranking')
         r_weight = clf.coef_.dot(feature.T).toarray()[0]
         r_min = np.min(r_weight)
         r_range = np.max(r_weight) - r_min

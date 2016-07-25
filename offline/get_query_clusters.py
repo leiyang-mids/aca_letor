@@ -3,7 +3,7 @@ from scipy.sparse import vstack
 import numpy as np
 
 
-def get_query_clusters(points, k):
+def get_query_clusters(points, k, log):
     '''
     points [n,m] - array for n points with dimention m - encoded query
     '''
@@ -33,7 +33,8 @@ def get_query_clusters(points, k):
             centroids.append(points[pid][cid])
             in_dist.append(1 if sum(pid)==1 else np.mean(dist[np.ix_(pid,pid)][np.triu_indices(sum(pid),k=1)]))
         centroids = vstack(centroids)
+        log.trace('k-mean iteration: average in-cluster similarity %s' %str(in_dist))
         # traditional way to get new centroid, not working well for cosine distance
 #         centroids = normalize([np.mean(points[cluster_new==c], axis=0) for c in np.unique(cluster_new)])
 
-    return cluster_new, np.mean(in_dist), centroids
+    return cluster_new, np.min(in_dist), centroids

@@ -1,4 +1,4 @@
-# Learn to Rank (LETOR) for ACA Project
+# Learn to Rank (LETOR) for ACA Health Plan
 
 ###Components:
 - **Feature extraction:** data preprocessing to extract feature from MongoDB

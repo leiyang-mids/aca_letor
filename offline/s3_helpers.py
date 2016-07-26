@@ -17,7 +17,7 @@ class s3_helper:
         assuming all feature pickle start with state abbreviation
         '''
         for o in self.bucket.objects.all():
-            if o.key.startswith('feature/%s_' %state):
+            if o.key.startswith('feature_1/%s_' %state):
                 self.bucket.download_file(o.key, o.key)
                 print 'successfully download feature %s from S3' %o.key
                 return o.key

@@ -39,7 +39,7 @@ def get_rank_for_state_plan(query_cluster, click_data, log):
 
     # for each query cluster
     log.trace('training started for %d query clusters' %(np.max(query_cluster)+1))
-    p_index = {p:plans.index(p) for p in plans}
+    p_index = {p:plans.index(p) for p in plans}    
     letor_rank = []
     for c in np.unique(query_cluster):
         log.trace('getting training data from cluster %d with %d queries' %(c, sum(query_cluster==c)))

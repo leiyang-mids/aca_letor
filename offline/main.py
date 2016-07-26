@@ -3,7 +3,7 @@ from get_click_data import *
 from train_one_state import *
 from simulate_clicks import *
 from logger import *
-import traceback, time
+import traceback, time, sys
 import numpy as np
 
 from simulate_clicks import *
@@ -22,28 +22,28 @@ def main():
 			continue
 		# get click-through data
 		try:
-			print 'get query and click data'
+			log.trace('get query and click data')
 			# click_data = get_click_data() if not test else simulate_clicks()
 			click_data = simulate_clicks()
 		except Exception as ex:
 			traceback.print_exc(file=log.log_handler())
-			print 'error getting click data, retry in %d minutes.' %minute
+			log.trace('error getting click data, retry in %d minutes.' %minute)
 			next_run = datetime.now() + timedelta(minutes=minute)
 			continue
 		# train for each state
 		for state in np.unique(click_data['state']):
 			try:
-				train_one_state(click_data, state)
+				train_one_state(click_data, state, log)
 			except KeyboardInterrupt:
 				sys.exit('User termination')
 			except Exception as ex:
 				traceback.print_exc(file=log.log_handler())
-				print 'training has encountered an error for state %s' %state
+				log.trace('training has encountered an error for state %s' %state)
 		# training completed, get next run time
 		next_run = datetime.now() + timedelta(hours=hour)
-		print 'training has completed, next run time is %s' %str(next_run)
+		log.trace('training has completed, next run time is %s' %str(next_run))
 		# upload log file to S3
-		s3clnt.upload2(log.log_name(), 'log/'+log.log_name())
+		s3clnt.upload2(log.log_file(), 'log/'+log.log_file())
 
 if __name__ == "__main__":
 	main()

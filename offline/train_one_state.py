@@ -13,7 +13,7 @@ def train_one_state(click_data, state, log):
     q_cluster, q_characterizer, centroids = query_characterizer(s_rows['query'], log)
     log.trace('run letor training for state %s' %state)
     letor_rank, plans = get_rank_for_state_plan(q_cluster, np.array([[r['ranks'],r['clicks']] for r in s_rows]), log)
-    if not plans or not letor_rank:
+    if (not plans) or (not letor_rank):
         log.trace('no feature file found for state %s, skip training.' %state)
         return
     log.trace('save ranking & online file on s3')

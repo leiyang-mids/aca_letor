@@ -21,4 +21,4 @@ def query_characterizer(queries, log, similarity_limit = 0.9):
         clusters, min_sim, centroids = get_query_clusters(encoded_query, k, log)
         log.trace('characterizing queries with k = %d, minimum similarity is %.4f' %(k, min_sim))
 
-    return clusters, characterizer, centroids #, avg_sim, k
+    return clusters, characterizer.vocabulary_, centroids.toarray() #, avg_sim, k

@@ -1,4 +1,4 @@
-# ACA LETOR Runtime Executer
+# Runtime Executer
 
 ###class
     letor_online(query_vocab, cluster_centroids, similarity = 0.8)

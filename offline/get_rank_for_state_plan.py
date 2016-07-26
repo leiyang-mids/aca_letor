@@ -59,7 +59,7 @@ def get_rank_for_state_plan(query_cluster, click_data, log):
                                      if i%2==0 else (feature.getrow(p_index[q[0][i]]) - feature.getrow(p_index[q[0][c_index]])) )
                     tgt_vec.append((-1)**i)
         log.trace('start training with %d pair features with %d +1' %(len(tgt_vec), sum(np.array(tgt_vec)==1)))
-        clf = svm.SVC(kernel='linear', C=.2, max_iter=-1)
+        clf = svm.SVC(kernel='linear', C=.2, max_iter=10*len(tgt_vec))
         clf.fit(vstack(fea_mat, format='csr'), tgt_vec)
         log.trace('training completed, obtain plan ranking')
         r_weight = clf.coef_.dot(feature.T).toarray()[0]

@@ -43,7 +43,7 @@ def get_rank_for_state_plan(query_cluster, click_data, log):
     letor_rank = []
     for c in np.unique(query_cluster):
         log.trace('getting training data from cluster %d with %d queries' %(c, sum(query_cluster==c)))
-        fea_mat, tgt_vec = [], []
+        fea_mat, tgt_vec = [0], [-1]
         # assemble training points from its queries
         for q in click_data[query_cluster==c]:
             # loop through each click to get training pairs
@@ -56,11 +56,11 @@ def get_rank_for_state_plan(query_cluster, click_data, log):
                     if (i in click_indice) or (q[0][i] not in p_index) or (q[0][c_index] not in p_index):
                         continue
                     fea_mat.append( (feature.getrow(p_index[q[0][c_index]]) - feature.getrow(p_index[q[0][i]]))
-                                     if i%2==0 else (feature.getrow(p_index[q[0][i]]) - feature.getrow(p_index[q[0][c_index]])) )
-                    tgt_vec.append((-1)**i)
-        log.trace('start training with %d pair features with %d +1' %(len(tgt_vec), sum(np.array(tgt_vec)==1)))
-        clf = svm.SVC(kernel='linear', C=.2, max_iter=10*len(tgt_vec))
-        clf.fit(vstack(fea_mat, format='csr'), tgt_vec)
+                                     if tgt_vec[-1]==-1 else (feature.getrow(p_index[q[0][i]]) - feature.getrow(p_index[q[0][c_index]])) )
+                    tgt_vec.append(-tgt_vec[-1])
+        log.trace('start training with %d pair features with %d +1' %(len(tgt_vec)-1, sum(np.array(tgt_vec)==1)))
+        clf = svm.SVC(kernel='linear', C=.2, max_iter=max(10*len(tgt_vec),10000))
+        clf.fit(vstack(fea_mat[1:], format='csr'), tgt_vec[1:])
         log.trace('training completed, obtain plan ranking')
         r_weight = clf.coef_.dot(feature.T).toarray()[0]
         r_min = np.min(r_weight)

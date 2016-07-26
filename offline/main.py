@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from get_click_data import *
 from train_one_state import *
+from simulate_clicks import *
+from logger import *
 import traceback, time
 import numpy as np
 
@@ -21,7 +23,8 @@ def main():
 		# get click-through data
 		try:
 			print 'get query and click data'
-			click_data = get_click_data() if not test else simulate_clicks()
+			# click_data = get_click_data() if not test else simulate_clicks()
+			click_data = simulate_clicks()
 		except Exception as ex:
 			traceback.print_exc(file=log.log_handler())
 			print 'error getting click data, retry in %d minutes.' %minute

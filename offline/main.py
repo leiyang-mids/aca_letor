@@ -11,13 +11,14 @@ from simulate_clicks import *
 def main():
 	'''
 	'''
-	next_run, hour, minute = datetime.now(), 5, 10
-	log = logger('training')
+	next_run, hour, minute = datetime.now(), 3, 18
+	s3_fea = 'feature_1'
+	log, ready = logger('training'), do_setup(s3_fea)
 
-	while True:
+	while ready:
 		# cyclic execution
 		if datetime.now() < next_run:
-			time.sleep((next_run-datetime.now()).seconds)
+			time.sleep((next_run-datetime.now()).total_seconds())
 			continue
 		# get click-through data
 		try:
@@ -33,7 +34,7 @@ def main():
 		failure, all_states = [], np.unique(click_data['state'])
 		for state in all_states:
 			try:
-				train_one_state(click_data, state, log)
+				train_one_state(click_data, state, log, s3_fea)
 			except KeyboardInterrupt:
 				log.stop()
 				sys.exit('User termination')
@@ -43,9 +44,11 @@ def main():
 				log.trace('training has encountered an error for state %s' %state)
 		# training completed, get next run time
 		next_run = datetime.now() + timedelta(hours=hour)
-		log.trace('training has completed for %d states, failed for %d states: %s' %(len(all_states)-len(failure), len(failure), str(failure))
+		done_msg = 'training has completed for %d states, failed for %d states: %s' %(len(all_states)-len(failure), len(failure), str(failure)
+		log.trace(done_msg)
 		log.trace('next run time is %s, so long!' %str(next_run))
 		log.stop()
+		print '%s: %s' %(str(datetime.now()), done_msg)
 
 if __name__ == "__main__":
 	main()

@@ -2,8 +2,6 @@ from scipy.sparse import *
 from sklearn import svm
 import pickle, glob
 import numpy as np
-from s3_helpers import *
-
 
 def get_rank_for_state_plan(query_cluster, click_data, log, feature_loc):
     '''
@@ -14,25 +12,19 @@ def get_rank_for_state_plan(query_cluster, click_data, log, feature_loc):
                    2nd - list of clicked plan_id
     feature_loc  : S3 folder name that contains the feature pickles to use
     '''
-    s3loader = s3_helper()
+
     # get state info from click data
-    state_ids = list(set(s[5:7] for j in click_data for s in j[0]))
+    state_ids = np.unique([s[5:7] for j in click_data for s in j[0]])
     state = state_ids[0]
-    if len(state_ids) > 1:
+    if state_ids.size > 1:
         log.warning('click data has plans from multiple states, training for ' + state)
 
-    # load feature data from S3 if no local copy is found
+    # load pickle
     state_pickle = glob.glob('%s/%s*.pickle' %(feature_loc, state))
     if not state_pickle:
-        state_pickle.append(s3loader.download_feature_pickle(state, feature_loc))
-        if not state_pickle[0]:
-            return None, None
-        log.trace('downloaded feature pickle %s from s3' %state_pickle[0])
+        return None, None
     if len(state_pickle) > 1:
         log.warning('find multiple state feature pickles, using %s' %state_pickle[0])
-
-    # testData = 'feature/UT_74_19243.pickle'
-    # with open(testData) as f:
     with open(state_pickle[0]) as f:
         feature, plans = pickle.load(f)
     n_plan, n_fea = feature.shape
@@ -40,7 +32,7 @@ def get_rank_for_state_plan(query_cluster, click_data, log, feature_loc):
 
     # for each query cluster
     log.trace('training started for %d query clusters' %(np.max(query_cluster)+1))
-    p_index = {p:plans.index(p) for p in plans}
+    p_index = {p:plans.index(p) for p in plans} # this comprehension only works for python 2.7 and after
     letor_rank = []
     for c in np.unique(query_cluster):
         log.trace('getting training data from cluster %d with %d queries' %(c, sum(query_cluster==c)))
@@ -74,5 +66,4 @@ def get_rank_for_state_plan(query_cluster, click_data, log, feature_loc):
             r_range = np.max(r_weight) - r_min
             letor_rank.append((r_weight-r_min)/r_range)
 
-    # save pickle in training data for ES indexing
     return np.array(letor_rank), plans

@@ -24,4 +24,4 @@ Name|Function
 ### Deployment:
 - system requirement: python 2.7 or after, sklearn, boto3, psycopg2, awscli
 - set AWS credential for S3 access:
-  aws configure
+    aws configure

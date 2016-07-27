@@ -18,7 +18,7 @@ def main():
 	while True:
 
 		if datetime.now() < next_run:
-			# time.sleep((next_run-datetime.now()).total_seconds())
+			time.sleep((next_run-datetime.now()).seconds)
 			continue
 		# get click-through data
 		try:

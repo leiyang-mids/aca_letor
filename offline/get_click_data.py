@@ -36,8 +36,8 @@ def get_click_data(log, page_interval = 1.5):
         # check timestamp block for page, then sort on score to get plan order
         plans = np.sort(np.array(plans, dtype=plan_type), order=['ts'])
         pages, p_rank = np.zeros(len(plans)), []
-        for i in range(1, len(plans)):
-            pages[i] = pages[i-1] if (plans[i]['ts']-plans[i-1]['ts']).total_seconds()<page_interval else pages[i-1]+1
+        for i in range(1, len(plans)):            
+            pages[i] = pages[i-1] if (plans[i]['ts']-plans[i-1]['ts']).seconds<page_interval else pages[i-1]+1
         for pg in np.unique(pages):
             p_rank += [pl['plan_id'] for pl in np.sort(plans[pages==pg], order=['score','ts'])]
         # assemble the query info

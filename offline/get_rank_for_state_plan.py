@@ -59,14 +59,19 @@ def get_rank_for_state_plan(query_cluster, click_data, log, feature_loc):
                     fea_mat.append( (feature.getrow(p_index[q[0][c_index]]) - feature.getrow(p_index[q[0][i]]))
                                      if tgt_vec[-1]==-1 else (feature.getrow(p_index[q[0][i]]) - feature.getrow(p_index[q[0][c_index]])) )
                     tgt_vec.append(-tgt_vec[-1])
-        log.trace('start training with %d pair features with %d +1' %(len(tgt_vec)-1, sum(np.array(tgt_vec)==1)))
-        clf = svm.SVC(kernel='linear', C=.2, max_iter=max(10*len(tgt_vec),10000))
-        clf.fit(vstack(fea_mat[1:], format='csr'), tgt_vec[1:])
-        log.trace('training completed, obtain plan ranking')
-        r_weight = clf.coef_.dot(feature.T).toarray()[0]
-        r_min = np.min(r_weight)
-        r_range = np.max(r_weight) - r_min
-        letor_rank.append((r_weight-r_min)/r_range)
+        # train SVM letor model
+        if len(tgt_vec)-1<3:
+            log.trace('not enough training data for query cluster %d, return 1\'s as results' %c)
+            letor_rank.append(np.ones(n_plan))
+        else:
+            log.trace('start training with %d pair features with %d +1' %(len(tgt_vec)-1, sum(np.array(tgt_vec)==1)))
+            clf = svm.SVC(kernel='linear', C=.2, max_iter=max(10*len(tgt_vec),10000))
+            clf.fit(vstack(fea_mat[1:], format='csr'), tgt_vec[1:])
+            log.trace('training completed, obtain plan ranking')
+            r_weight = clf.coef_.dot(feature.T).toarray()[0]
+            r_min = np.min(r_weight)
+            r_range = np.max(r_weight) - r_min
+            letor_rank.append((r_weight-r_min)/r_range)
 
     # save pickle in training data for ES indexing
     return np.array(letor_rank), plans

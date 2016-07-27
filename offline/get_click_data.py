@@ -6,8 +6,7 @@ def get_click_data(log, page_interval = 1.5):
     '''
     '''
     host = 'aca-db-dev.cv6yjavd16jd.us-west-1.rds.amazonaws.com'
-    db = 'aca_db'
-    conn = psycopg2.connect(database=db, user='aca_db_dev', password='133', host=host, port='5432')
+    conn = psycopg2.connect(database='aca_db', user='aca_db_dev', password='123', host=host, port='5432')
     cur = conn.cursor()
 
     sql_click = '(select c.session_id as sid, array_agg(c.click) as c_t from (select session_id, plan_id || \',\' || created_clicks as click from Clicks) c group by c.session_id) c2'
@@ -15,6 +14,7 @@ def get_click_data(log, page_interval = 1.5):
     sql_exe = 'select q.session_id as sid, q.state as state, q.health as health, c2.c_t as click, r2.r_t as rank from Queries q join %s on q.session_id=c2.sid join %s on c2.sid=r2.sid' %(sql_click, sql_rank)
     cur.execute(sql_exe)
     records = cur.fetchall()
+    log.trace('get query and click data with SQL: "%s"' %sql_exe)
     # define data type
     plan_type = [('plan_id','S16'), ('ts',datetime), ('score',float)]
     click_type = [('plan_id','S16'), ('ts',datetime)]
@@ -36,7 +36,7 @@ def get_click_data(log, page_interval = 1.5):
         # check timestamp block for page, then sort on score to get plan order
         plans = np.sort(np.array(plans, dtype=plan_type), order=['ts'])
         pages, p_rank = np.zeros(len(plans)), []
-        for i in range(1, len(plans)):            
+        for i in range(1, len(plans)):
             pages[i] = pages[i-1] if (plans[i]['ts']-plans[i-1]['ts']).seconds<page_interval else pages[i-1]+1
         for pg in np.unique(pages):
             p_rank += [pl['plan_id'] for pl in np.sort(plans[pages==pg], order=['score','ts'])]

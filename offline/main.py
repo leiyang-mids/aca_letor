@@ -12,40 +12,40 @@ def main():
 	'''
 	'''
 	next_run, hour, minute = datetime.now(), 5, 10
-	s3clnt, log = s3_helper(), logger('training')
-	test = False
+	log = logger('training')
 
 	while True:
-
+		# cyclic execution
 		if datetime.now() < next_run:
 			time.sleep((next_run-datetime.now()).seconds)
 			continue
 		# get click-through data
 		try:
 			log.start()
-			log.trace('get query and click data')
-			click_data = get_click_data(log) if not test else simulate_clicks()
-			# click_data = simulate_clicks()
+			click_data = get_click_data(log) #if not test else simulate_clicks()
 		except Exception as ex:
 			traceback.print_exc(file=log.log_handler())
-			log.trace('error getting click data, retry in %d minutes.' %minute)
+			log.error('error in getting click data, retry in %d minutes.' %minute)
 			next_run = datetime.now() + timedelta(minutes=minute)
+			log.stop()
 			continue
 		# train for each state
-		for state in np.unique(click_data['state']):
+		failure, all_states = [], np.unique(click_data['state'])
+		for state in all_states:
 			try:
 				train_one_state(click_data, state, log)
 			except KeyboardInterrupt:
+				log.stop()
 				sys.exit('User termination')
 			except Exception as ex:
+				failure.append(state)
 				traceback.print_exc(file=log.log_handler())
 				log.trace('training has encountered an error for state %s' %state)
 		# training completed, get next run time
 		next_run = datetime.now() + timedelta(hours=hour)
-		log.trace('training has completed, next run time is %s' %str(next_run))
+		log.trace('training has completed for %d states, failed for %d states: %s' %(len(all_states)-len(failure), len(failure), str(failure))
+		log.trace('next run time is %s, so long!' %str(next_run))
 		log.stop()
-		# upload log file to S3
-		s3clnt.upload2(log.log_file(), 'log/'+log.log_file())
 
 if __name__ == "__main__":
 	main()

@@ -5,13 +5,14 @@ import numpy as np
 from s3_helpers import *
 
 
-def get_rank_for_state_plan(query_cluster, click_data, log):
+def get_rank_for_state_plan(query_cluster, click_data, log, feature_loc):
     '''
     function     : train LETOR models for queries against one state
     query_cluster: list of [nx1] integers to indicate query cluster of one state
     click_data   : list of [nx2] lists of plan_id - each query has two lists:
                    1st - total plan ranking from ES results
                    2nd - list of clicked plan_id
+    feature_loc  : S3 folder name that contains the feature pickles to use
     '''
     s3loader = s3_helper()
     # get state info from click data
@@ -21,9 +22,9 @@ def get_rank_for_state_plan(query_cluster, click_data, log):
         log.warning('click data has plans from multiple states, training for ' + state)
 
     # load feature data from S3 if no local copy is found
-    state_pickle = glob.glob('feature_1/%s*.pickle' %state)
+    state_pickle = glob.glob('%s/%s*.pickle' %(feature_loc, state))
     if not state_pickle:
-        state_pickle.append(s3loader.download_feature_pickle(state))
+        state_pickle.append(s3loader.download_feature_pickle(state, feature_loc))
         if not state_pickle[0]:
             return None, None
         log.trace('downloaded feature pickle %s from s3' %state_pickle[0])

@@ -46,18 +46,19 @@ def get_rank_for_state_plan(query_cluster, click_data, log, feature_loc):
         log.trace('getting training data from cluster %d with %d queries' %(c, sum(query_cluster==c)))
         fea_mat, tgt_vec = [0], [-1]
         # assemble training points from its queries
-        for q in click_data[query_cluster==c]:
+        for rank,click in click_data[query_cluster==c]:
             # loop through each click to get training pairs
-            click_indice = [np.where(q[0]==p)[0][0] for p in q[1]]
-            log.trace('query has %d clicks' %(len(q[1])))
+            # click_indice = [np.where(np.array(rank)==p)[0][0] for p in click]
+            click_indice = [rank.index(p) for p in click]
+            log.trace('query has %d clicks' %(len(click)))
             for c_index in click_indice:
-                log.trace('extracting feature for clicked plan %s' %q[0][c_index])
+                log.trace('extracting feature for clicked plan %s' %rank[c_index])
                 # loop through all items before current clicked item
                 for i in range(c_index):
-                    if (i in click_indice) or (q[0][i] not in p_index) or (q[0][c_index] not in p_index):
+                    if (i in click_indice) or (rank[i] not in p_index) or (rank[c_index] not in p_index):
                         continue
-                    fea_mat.append( (feature.getrow(p_index[q[0][c_index]]) - feature.getrow(p_index[q[0][i]]))
-                                     if tgt_vec[-1]==-1 else (feature.getrow(p_index[q[0][i]]) - feature.getrow(p_index[q[0][c_index]])) )
+                    fea_mat.append( (feature.getrow(p_index[rank[c_index]]) - feature.getrow(p_index[rank[i]]))
+                                     if tgt_vec[-1]==-1 else (feature.getrow(p_index[rank[i]]) - feature.getrow(p_index[rank[c_index]])) )
                     tgt_vec.append(-tgt_vec[-1])
         # train SVM letor model
         if len(tgt_vec)-1<3:

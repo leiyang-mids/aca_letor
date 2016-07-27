@@ -9,12 +9,19 @@
 - pre-ranked weight will be indexed for each state in ElasticSearch server for online prediction
 
 ### File Description:
-- **main.py**: main procedure to execute training
-- **get_click_data.py**: retrieve and organize click-through data from PostgreSQL
-- **query_characterizer.py**: find the optimal clusters for query
-- **get_query_cluster.py**: run k-mean clustering on a group of queries
-- **get_rank_for_state_plan.py**: train SVM to build LETOR model for each query cluster
-- **train_one_state.py**: build LETOR models for one state
-- **s3_helpers.py**: retrieve feature data from S3, and upload training data to S3
-- **add_query.sql**: generate testing data for click-through database
-- **simulate_clicks.py**: generate testing data for plan ranking
+Name|Function
+---|---
+**main.py** | main procedure to execute training
+**get_click_data.py** | retrieve and organize click-through data from PostgreSQL
+**query_characterizer.py** | find the optimal clusters for query
+**get_query_cluster.py** | run k-mean clustering on a group of queries
+**get_rank_for_state_plan.py** | train SVM to build LETOR model for each query cluster
+**train_one_state.py** | build LETOR models for one state
+**s3_helpers.py** | retrieve feature data from S3, and upload training data to S3
+**add_query.sql** | generate testing data for click-through database
+**simulate_clicks.py** | generate testing data for plan ranking
+
+### Deployment:
+- system requirement: python 2.7 or after, sklearn, boto3, psycopg2, awscli
+- set AWS credential for S3 access:
+  aws configure

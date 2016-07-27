@@ -24,8 +24,8 @@ def main():
 		try:
 			log.start()
 			log.trace('get query and click data')
-			# click_data = get_click_data() if not test else simulate_clicks()
-			click_data = simulate_clicks()
+			click_data = get_click_data(log) if not test else simulate_clicks()
+			# click_data = simulate_clicks()
 		except Exception as ex:
 			traceback.print_exc(file=log.log_handler())
 			log.trace('error getting click data, retry in %d minutes.' %minute)

@@ -21,7 +21,7 @@ def get_rank_for_state_plan(query_cluster, click_data, log):
         log.warning('click data has plans from multiple states, training for ' + state)
 
     # load feature data from S3 if no local copy is found
-    state_pickle = glob.glob('feature/%s*.pickle' %state)
+    state_pickle = glob.glob('feature_1/%s*.pickle' %state)
     if not state_pickle:
         state_pickle.append(s3loader.download_feature_pickle(state))
         if not state_pickle[0]:

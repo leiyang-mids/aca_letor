@@ -1,12 +1,13 @@
-# import psycopg2
+import psycopg2
 import numpy as np
 from datetime import datetime
 
 def get_click_data(log, page_interval = 1.5):
     '''
     '''
-
-    conn = psycopg2.connect(database="w205", user="postgres", password="pass", host="localhost", port="5432")
+    host = 'aca-db-dev.cv6yjavd16jd.us-west-1.rds.amazonaws.com'
+    db = 'aca_db'
+    conn = psycopg2.connect(database=db, user='aca_db_dev', password='133', host=host, port='5432')
     cur = conn.cursor()
 
     sql_click = '(select c.session_id as sid, array_agg(c.click) as c_t from (select session_id, plan_id || \',\' || created_clicks as click from Clicks) c group by c.session_id) c2'

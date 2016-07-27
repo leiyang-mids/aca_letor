@@ -18,10 +18,11 @@ def main():
 	while True:
 
 		if datetime.now() < next_run:
-			time.sleep((next_run-datetime.now()).total_seconds())
+			# time.sleep((next_run-datetime.now()).total_seconds())
 			continue
 		# get click-through data
 		try:
+			log.start()
 			log.trace('get query and click data')
 			# click_data = get_click_data() if not test else simulate_clicks()
 			click_data = simulate_clicks()
@@ -42,6 +43,7 @@ def main():
 		# training completed, get next run time
 		next_run = datetime.now() + timedelta(hours=hour)
 		log.trace('training has completed, next run time is %s' %str(next_run))
+		log.stop()
 		# upload log file to S3
 		s3clnt.upload2(log.log_file(), 'log/'+log.log_file())
 

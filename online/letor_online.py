@@ -14,7 +14,7 @@ class letor_online:
         '''
         # initialize encoder
         self.vocabulary = query_vocab
-        self.centroids = cluster_centroids
+        self.centroids = np.array(cluster_centroids)
         self.similarity_limit = similarity
 
     def get_rank_weight(self, query):
@@ -28,9 +28,9 @@ class letor_online:
         # encode the query, if it's orthogonal to all learnt queries, no ranking
         vQuery = np.zeros(len(self.vocabulary))
         query = query.lower()
-        for k,v in self.vocabulary.items():
-            if k in query:
-                vQuery[v] = 1
+        for i in range(len(vQuery)):
+            if self.vocabulary[i] in query:
+                vQuery[i] = 1
 
         if vQuery.sum() == 0:
             print 'No similar query is found, no ranking from LETOR'

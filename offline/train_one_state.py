@@ -24,8 +24,12 @@ def train_one_state(click_data, state, log, s3_fea):
     s3clnt.delete_by_state('training/%s' %(state))
     s3clnt.upload(save_training)
     save_online = 'online/%s_runtime.pickle' %(state)
+    cen = [list(c) for c in centroids]
+    voc = [None]*len(vocab)
+    for k,v in vocab.items():
+        voc[v] = k
     with open(save_online, 'w') as f:
-        pickle.dump([vocab, centroids], f)
+        pickle.dump([voc, cen], f)
     s3clnt.delete_by_state('online/%s' %(state))
     s3clnt.upload(save_online)
     log.trace('ranking & online file are saved on s3')

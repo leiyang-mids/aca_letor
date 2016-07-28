@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from get_click_data import *
 from train_one_state import *
 from simulate_clicks import *
+from do_setup import *
 from logger import *
 import traceback, time, sys
 import numpy as np
@@ -44,7 +45,7 @@ def main():
 				log.trace('training has encountered an error for state %s' %state)
 		# training completed, get next run time
 		next_run = datetime.now() + timedelta(hours=hour)
-		done_msg = 'training has completed for %d states, failed for %d states: %s' %(len(all_states)-len(failure), len(failure), str(failure)
+		done_msg = 'training has completed for %d states, failed for %d states: %s' %(len(all_states)-len(failure), len(failure), str(failure))
 		log.trace(done_msg)
 		log.trace('next run time is %s, so long!' %str(next_run))
 		log.stop()

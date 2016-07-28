@@ -40,8 +40,8 @@ def get_rank_for_state_plan(query_cluster, click_data, log, feature_loc):
         # assemble training points from its queries
         for rank,click in click_data[query_cluster==c]:
             # loop through each click to get training pairs
-            # click_indice = [np.where(np.array(rank)==p)[0][0] for p in click]
-            click_indice = [rank.index(p) for p in click]
+            click_indice = [np.where(rank==p)[0][0] for p in click]
+            # click_indice = [rank.index(p) for p in click]
             log.trace('query has %d clicks' %(len(click)))
             for c_index in click_indice:
                 log.trace('extracting feature for clicked plan %s' %rank[c_index])

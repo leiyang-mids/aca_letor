@@ -24,7 +24,7 @@ Name|Function
 ### Deployment:
 - system requirement: python 2.7 or after, sklearn, boto3, psycopg2, awscli
 - 
-    sudo yum install gcc python-setuptools python-devel postgresql-devel
+    sudo yum install postgresql-devel
     sudo easy_install psycopg2
     
 - set AWS credential for S3 access:

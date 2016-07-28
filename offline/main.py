@@ -13,7 +13,7 @@ def main():
 	'''
 	'''
 	next_run, hour, minute = datetime.now(), 3, 18
-	s3_fea = 'feature_1'
+	s3_fea, test = 'feature_1', False
 	log, ready = logger('training'), do_setup(s3_fea)
 
 	while ready:
@@ -24,7 +24,7 @@ def main():
 		# get click-through data
 		try:
 			log.start()
-			click_data = get_click_data(log) #if not test else simulate_clicks()
+			click_data = get_click_data(log) if not test else simulate_clicks()
 		except Exception as ex:
 			traceback.print_exc(file=log.log_handler())
 			log.error('error in getting click data, retry in %d minutes.' %minute)

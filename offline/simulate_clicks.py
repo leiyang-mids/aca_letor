@@ -23,7 +23,7 @@ def simulate_clicks(n_query = 8, n_click_max = 8):
             health = ' '.join(sim_health[np.random.permutation(sim_health.size)[0:i+1]])
             sim_rank = state_plan[np.random.permutation(n_plan)]
             sim_click = state_plan[np.random.permutation(n_plan)][0:np.random.randint(low=1, high=min(n_plan,n_click_max))]
-            sim_data.append((state, health, sim_rank, sim_click))
+            sim_data.append((state, health, list(sim_rank), list(sim_click)))
 
     rtn_type = [('state','S2'), ('query','S512'), ('ranks',list), ('clicks',list)]
     return np.array(sim_data, dtype=rtn_type)

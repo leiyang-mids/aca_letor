@@ -25,3 +25,7 @@ Name|Function
 **logger.py** | record steps and states during the process
 **s3_helpers.py** | upload feature pickle file to AWS S3
 **dev.ipynb** | unit test
+
+## Deployment
+- specify the S3 folder name to store the feature pickle in _main.py_
+- execute main on background: `python main.py &`

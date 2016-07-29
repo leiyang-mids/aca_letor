@@ -11,20 +11,10 @@ class s3_helper:
         s3 = boto3.resource('s3', region)
         self.bucket = s3.Bucket(bucket_name)
 
-    def download_feature_pickle(self, state):
-        '''
-        download feature pickle for a state
-        assuming all feature pickle start with state abbreviation
-        '''
+    def download_all(self, folder):
         for o in self.bucket.objects.all():
-            if o.key.startswith('feature/%s_' %state):
+            if o.key.startswith(folder):
                 self.bucket.download_file(o.key, o.key)
-                print 'successfully download feature %s from S3' %o.key
-                return o.key
-        else:
-            # no file found
-            print 'no feature pickle found for state %s' %state
-            return None
 
     def upload(self, key):
         '''

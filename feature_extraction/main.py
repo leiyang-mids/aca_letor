@@ -31,7 +31,7 @@ def main():
     failure = []
     for state in state_ids:
         try:
-            if state != '':
+            if state == '':
                 continue
             state_plan = [i for i in all_plan if state in i]
             log.trace('processing %d plans for %s' %(len(state_plan), state))

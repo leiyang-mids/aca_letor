@@ -31,7 +31,7 @@ def main():
     failure = []
     for state in state_ids:
         try:
-            if state != 'AK':
+            if state != '':
                 continue
             state_plan = [i for i in all_plan if state in i]
             log.trace('processing %d plans for %s' %(len(state_plan), state))
@@ -49,7 +49,7 @@ def main():
             failure.append(state)
             log.error('feature extraction has encountered error for state %s' %state)
 
-    log.trace('feature extraction completed, faied for %d states: %s' %(len(failure), ', '.join(failure)))
+    log.trace('feature extraction completed, failed for %d states: %s' %(len(failure), ', '.join(failure)))
     log.stop()
     client.close()
 

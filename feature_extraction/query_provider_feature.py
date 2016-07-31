@@ -2,7 +2,7 @@
 def getProviderAllStates(provider_collection, plans):
     for p in provider_collection.aggregate(
         [
-            {'$match':{'plans.plan_id':{'$in':plans}, 'facility_name':{'$exists':False}}},
+            {'$match':{'plans.plan_id':{'$in':plans}}}, #'facility_name':{'$exists':False}}},
             {'$unwind':'$plans'},
             {'$match':{'plans.plan_id':{'$in':plans}}},
             {'$unwind':'$speciality'},
@@ -10,10 +10,10 @@ def getProviderAllStates(provider_collection, plans):
             {'$group':{
                     '_id':{
                         'sp':'$speciality',
-                        'ac':'$accepting',
+                        # 'ac':'$accepting',
                         'lg':'$languages',
-                        'pn':'$plans.network_tier',
-                        'ty':'$type',
+                        # 'pn':'$plans.network_tier',
+                        # 'ty':'$type',
                     },
                 }
             },
@@ -21,10 +21,10 @@ def getProviderAllStates(provider_collection, plans):
                     '_id':0,
                     'prov_state':{'$concat':[
                             {'$cond':[{'$or':[{'$eq':['$_id.sp',None]},{'$eq':['$_id.sp','']}]},'NA','$_id.sp']},'|',
-                            {'$cond':[{'$or':[{'$eq':['$_id.ty',None]},{'$eq':['$_id.ty','']}]},'NA','$_id.ty']},'|',
-                            {'$cond':[{'$or':[{'$eq':['$_id.ac',None]},{'$eq':['$_id.ac','']}]},'NA','$_id.ac']},'|',
+                            # {'$cond':[{'$or':[{'$eq':['$_id.ty',None]},{'$eq':['$_id.ty','']}]},'NA','$_id.ty']},'|',
+                            # {'$cond':[{'$or':[{'$eq':['$_id.ac',None]},{'$eq':['$_id.ac','']}]},'NA','$_id.ac']},'|',
                             {'$cond':[{'$or':[{'$eq':['$_id.lg',None]},{'$eq':['$_id.lg','']}]},'NA','$_id.lg']},'|',
-                            {'$cond':[{'$or':[{'$eq':['$_id.pn',None]},{'$eq':['$_id.pn','']}]},'NA','$_id.pn']},
+                            # {'$cond':[{'$or':[{'$eq':['$_id.pn',None]},{'$eq':['$_id.pn','']}]},'NA','$_id.pn']},
                     ]},
                 }
             },
@@ -38,7 +38,7 @@ def getProviderAllStates(provider_collection, plans):
 def getProviderStateForPlans(provider_collection, plans):
     return provider_collection.aggregate(
         [
-            {'$match':{'plans.plan_id':{'$in':plans}, 'facility_name':{'$exists':False}}},
+            {'$match':{'plans.plan_id':{'$in':plans}}}, #'facility_name':{'$exists':False}}},
             {'$unwind':'$plans'},
             {'$match':{'plans.plan_id':{'$in':plans}}},
             {'$unwind':'$speciality'},
@@ -47,10 +47,10 @@ def getProviderStateForPlans(provider_collection, plans):
                     '_id':{
                         'pl':'$plans.plan_id',
                         'sp':'$speciality',
-                        'ac':'$accepting',
+                        # 'ac':'$accepting',
                         'lg':'$languages',
-                        'pn':'$plans.network_tier',
-                        'ty':'$type',
+                        # 'pn':'$plans.network_tier',
+                        # 'ty':'$type',
                     },
                     'cnt':{'$sum':1},
                     'loc':{'$sum':{'$size':'$addresses'}}
@@ -61,10 +61,10 @@ def getProviderStateForPlans(provider_collection, plans):
                     'plan':'$_id.pl',
                     'prov_state':{'$concat':[
                             {'$cond':[{'$or':[{'$eq':['$_id.sp',None]},{'$eq':['$_id.sp','']}]},'NA','$_id.sp']},'|',
-                            {'$cond':[{'$or':[{'$eq':['$_id.ty',None]},{'$eq':['$_id.ty','']}]},'NA','$_id.ty']},'|',
-                            {'$cond':[{'$or':[{'$eq':['$_id.ac',None]},{'$eq':['$_id.ac','']}]},'NA','$_id.ac']},'|',
+                            # {'$cond':[{'$or':[{'$eq':['$_id.ty',None]},{'$eq':['$_id.ty','']}]},'NA','$_id.ty']},'|',
+                            # {'$cond':[{'$or':[{'$eq':['$_id.ac',None]},{'$eq':['$_id.ac','']}]},'NA','$_id.ac']},'|',
                             {'$cond':[{'$or':[{'$eq':['$_id.lg',None]},{'$eq':['$_id.lg','']}]},'NA','$_id.lg']},'|',
-                            {'$cond':[{'$or':[{'$eq':['$_id.pn',None]},{'$eq':['$_id.pn','']}]},'NA','$_id.pn']},
+                            # {'$cond':[{'$or':[{'$eq':['$_id.pn',None]},{'$eq':['$_id.pn','']}]},'NA','$_id.pn']},
                     ]},
                     'count':'$cnt',
                     'location':'$loc',
@@ -84,7 +84,7 @@ def getProviderStateForPlans(provider_collection, plans):
 def getProviderListForPlans(provider_collection, plans):
     return provider_collection.aggregate(
         [
-            {'$match':{'plans.plan_id':{'$in':plans}, 'facility_name':{'$exists':False}}},
+            {'$match':{'plans.plan_id':{'$in':plans}}}, #'facility_name':{'$exists':False}}},
             {'$unwind':'$plans'},
             {'$match':{'plans.plan_id':{'$in':plans}}},
             {'$group':{'_id':'$plans.plan_id', 'providers': {'$addToSet':'$npi'}}},

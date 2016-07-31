@@ -10,6 +10,11 @@ def main():
     main procedure to extract features for all states
     '''
     log, s3clnt, s3folder = logger('feature'), s3_helper(), 'feature'
+    for f in ['log', s3folder]:
+        if not os.path.exists(f):
+            os.makedirs(f)
+    log.start()
+
     # connect to MongoDB and get collections
     m_url = 'ec2-52-53-173-200.us-west-1.compute.amazonaws.com'
     client = MongoClient(m_url, 27017)
@@ -43,9 +48,7 @@ def main():
             log.error('feature extraction has encountered error for state %s' %state)
 
     log.trace('feature extraction completed, faied for %d states: %s' %(len(failure), ', '.join(failure)))
-    log.close()
-    # put log on S3
-    s3clnt.upload2(log.log_file(), 'log/'+log.log_file())
+    log.stop()
 
 if __name__ == "__main__":
 	main()

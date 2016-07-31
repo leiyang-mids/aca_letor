@@ -11,6 +11,8 @@ def mergeSpec(t2):
     for tt in t2:
         for s in tt['speciality']:
             cnt[s] += tt['count']
+    cnt.pop('')
+    cnt.pop(None)
     return cnt
 
 def extract_provider_feature(prov_col, plan_ids, log):

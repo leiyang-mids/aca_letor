@@ -3,7 +3,7 @@ from get_state_feature import *
 from s3_helpers import *
 from logger import *
 import numpy as np
-import traceback, pickle
+import traceback, pickle, os
 
 def main():
     '''

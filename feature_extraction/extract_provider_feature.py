@@ -1,5 +1,6 @@
 from query_provider_feature import *
 from scipy.sparse import *
+import numpy as np
 
 def extract_provider_feature(prov_col, plan_ids, log):
     '''
@@ -13,12 +14,14 @@ def extract_provider_feature(prov_col, plan_ids, log):
     log.trace('check provider coverage for each plan') ##### slow #####
     provider_coverage = {}
     for pid in plan_ids:
+        log.trace('get provider npi for %s' %pid)
         plan_npi = prov_col.find({'plans.plan_id':{'$eq':pid}}).distinct('npi')
         npn = len(plan_npi)
         if npn==0:
             log.warning('no provider found for flan %s' %pid)
             provider_coverage[pid] = csr_matrix((1, n_npi))
         else:
+            log.trace('sort provider npi for %s' %pid)
             col = np.where(np.in1d(all_npi, plan_npi, assume_unique=True))[0]
             provider_coverage[pid] = csr_matrix(([1]*npn, ([0]*npn, col)), shape=(1, n_npi))
     fea_mat.append(provider_coverage)
@@ -32,16 +35,18 @@ def extract_provider_feature(prov_col, plan_ids, log):
     log.trace('extract provider sumstat for each plan')
     provider_sumstat = {}
     for pid in plan_ids:
+        log.trace('get provider summary states for %s' %pid)
         p_states = getProviderStateForOnePlan(prov_col, pid)
         n_ps = len(p_states)
         if n_ps == 0:
             log.warning('no provider state found for plan %s' %pid)
             provider_sumstat[pid] = csr_matrix((1, n_prov))
         else:
+            log.trace('sort provider summary states for %s' %pid)
             data, spec = [p['count'] for p in p_states], [p['key'] for p in p_states]
             col = np.where(np.in1d(all_provider_states, spec, assume_unique=True))[0]
             provider_sumstat[pid] = csr_matrix((data, ([0]*n_ps, col)), shape=(1, n_prov))
     fea_mat.append(provider_sumstat)
     log.trace('complete for %d plans' %(len(provider_sumstat)))
-    
+
     return fea_mat, plan_ids

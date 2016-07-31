@@ -1,5 +1,6 @@
 from query_drug_feature import *
 from scipy.sparse import *
+import numpy as np
 
 def extract_drug_feature(drug_col, plan_ids, log):
     '''
@@ -13,12 +14,14 @@ def extract_drug_feature(drug_col, plan_ids, log):
     log.trace('check drug coverage for each plan')
     drug_coverage = {}
     for pid in plan_ids:
+        log.trace('get rx IDs for %s' %pid)
         rxs = drug_col.find({'plans.plan_id':{'$eq':pid}}).distinct('rxnorm_id')
         n_rx = len(rxs)
         if n_rx == 0:
             log.warning('no drug coverage found for plan %s' %pid)
             drug_coverage[pid] = csr_matrix((1, n_rxnorm))
         else:
+            log.trace('sort rx IDs for %s' %pid)
             col = np.where(np.in1d(all_rxnorm, rxs, assume_unique=True))[0]
             drug_coverage[pid] = csr_matrix(([1]*n_rx, ([0]*n_rx, col)), shape=(1,n_rxnorm))
     fea_mat.append(drug_coverage)
@@ -32,15 +35,17 @@ def extract_drug_feature(drug_col, plan_ids, log):
     log.trace('extract drug sumstat for each plan')
     drug_sumstat = {}
     for pid in plan_ids:
+        log.trace('get drug summary states for %s' %pid)
         d_states = getDrugAggregateCountForOnePlan(drug_col, pid)
         n_ds = len(d_states)
         if n_ds == 0:
             log.warning('no drug state found for plan %s' %pid)
             drug_sumstat[pid] = csr_matrix((1,n_state))
         else:
+            log.trace('sort drug summary states for %s' %pid)
             data, spec = [s['cnt'] for s in d_states], [s['key'] for s in d_states]
             col = np.where(np.in1d(all_drug_states,spec,assume_unique=True))[0]
-            drug_sumstat[pid] = csr_matrix((data, ([0]*n_ds, col)), shape=(1,n_state))    
+            drug_sumstat[pid] = csr_matrix((data, ([0]*n_ds, col)), shape=(1,n_state))
     fea_mat.append(drug_sumstat)
     log.trace('complete for %d plans' %(len(drug_sumstat)))
 

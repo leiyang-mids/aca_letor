@@ -31,6 +31,8 @@ def main():
     failure = []
     for state in state_ids:
         try:
+            if state != 'AK':
+                continue
             state_plan = [i for i in all_plan if state in i]
             log.trace('processing %d plans for %s' %(len(state_plan), state))
             plan, feature = get_state_feature(state_plan, plan_col, drug_col, prov_col, log)
@@ -49,6 +51,7 @@ def main():
 
     log.trace('feature extraction completed, faied for %d states: %s' %(len(failure), ', '.join(failure)))
     log.stop()
+    client.close()
 
 if __name__ == "__main__":
 	main()

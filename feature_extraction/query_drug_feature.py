@@ -1,5 +1,6 @@
 # get state space of drugs - count for all combinations of drug_tier/step_therapy/quantity_limit/prior_authorization
 def getDrugAggregateAllStates(drug_collection, plans):
+    states = None
     for d in drug_collection.aggregate(
         [
             {'$match':{'plans.plan_id':{'$in':plans}}},
@@ -33,7 +34,7 @@ def getDrugAggregateAllStates(drug_collection, plans):
         ], allowDiskUse=True
     ):
         states = d['state']
-    return states
+    return [] if not states else states
 
 
 def getDrugListForPlans(drug_collection, plans):
@@ -50,12 +51,13 @@ def getDrugListForPlans(drug_collection, plans):
 
 
 # get state space of drugs - count for all combinations of drug_tier/step_therapy/quantity_limit/prior_authorization
-def getDrugAggregateCountForPlans(drug_collection, plans):
-    return drug_collection.aggregate(
+def getDrugAggregateCountForOnePlan(drug_collection, plan):
+    states = None
+    for p in drug_collection.aggregate(
         [
-            {'$match':{'plans.plan_id':{'$in':plans}}},
+            {'$match':{'plans.plan_id':{'$eq':plan}}},
             {'$unwind':'$plans'},
-            {'$match':{'plans.plan_id':{'$in':plans}}},
+            {'$match':{'plans.plan_id':{'$eq':plan}}},
             {'$group':{
                     '_id':{'pl':'$plans.plan_id',
                            'ti':'$plans.drug_tier',
@@ -86,4 +88,6 @@ def getDrugAggregateCountForPlans(drug_collection, plans):
             {'$group':{'_id':'$pid', 'state':{'$push':{'key':'$drug_state','cnt':'$count'}}}},
             {'$project':{'plan':'$_id', 'drug_state':'$state', '_id':0}}
         ], allowDiskUse=True
-    )
+    ):
+        states = p['drug_state']
+    return [] if not states else states

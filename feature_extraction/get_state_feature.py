@@ -11,9 +11,9 @@ def get_state_feature(state_plan, plan, drug, provider, log):
     provider   - MongoDB provider collection
     '''
     # extract features from plan, drug, and provider
-    fea_mat, state_plan = extract_plan_feature(plan, state_plan, log)
-    drug_mat, state_plan = extract_drug_feature(drug, state_plan, log)
-    fea_mat += drug_mat
+    # fea_mat, state_plan = extract_plan_feature(plan, state_plan, log)
+    fea_mat, state_plan = extract_drug_feature(drug, state_plan, log)
+    # fea_mat += drug_mat
     prov_mat, state_plan = extract_provider_feature(provider, state_plan, log)
     fea_mat += prov_mat
 

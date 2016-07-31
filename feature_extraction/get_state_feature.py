@@ -24,4 +24,4 @@ def get_state_feature(state_plan, plan, drug, provider, log):
     # valid_plan = list(valid_plan)
 
     # combine all elements for each plan and return
-    return valid_plan, vstack([hstack([f[p] for f in fea_mat]) for p in state_plan], format='csr')
+    return state_plan, vstack([hstack([f[p] for f in fea_mat]) for p in state_plan], format='csr')

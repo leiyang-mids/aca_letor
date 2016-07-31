@@ -18,10 +18,10 @@ def get_state_feature(state_plan, plan, drug, provider, log):
     fea_mat += prov_mat
 
     # get common keys (plan has all elements)
-    valid_plan = set(fea_mat[0].keys())
-    for i in range(1, len(fea_mat)):
-        valid_plan = valid_plan.intersection(fea_mat[i].keys())
-    valid_plan = list(valid_plan)
+    # valid_plan = set(fea_mat[0].keys())
+    # for i in range(1, len(fea_mat)):
+    #     valid_plan = valid_plan.intersection(fea_mat[i].keys())
+    # valid_plan = list(valid_plan)
 
     # combine all elements for each plan and return
-    return valid_plan, vstack([hstack([f[p] for f in fea_mat]) for p in valid_plan], format='csr')
+    return valid_plan, vstack([hstack([f[p] for f in fea_mat]) for p in state_plan], format='csr')

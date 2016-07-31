@@ -40,7 +40,7 @@ def extract_drug_feature(drug_col, plan_ids, log):
             drug_sumstat[pid] = csr_matrix((1,n_state))
         else:
             data, spec = [s['cnt'] for s in d_states], [s['key'] for s in d_states]
-            col = np.where(np.in1d(all_drug_states,spec,assume_unique=True))[0]
+            col = [all_drug_states.index(i) for i in spec]
             drug_sumstat[pid] = csr_matrix((data, ([0]*n_ds, col)), shape=(1,n_state))
     fea_mat.append(drug_sumstat)
     log.trace('complete for %d plans' %(len(drug_sumstat)))

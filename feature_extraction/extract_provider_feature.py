@@ -12,15 +12,17 @@ def extract_provider_feature(prov_col, plan_ids, log):
 
     log.trace('check provider coverage for each plan') ##### slow #####
     provider_coverage = {}
-    for p in getProviderListForPlans(prov_col, plan_ids):
-        p_row = lil_matrix((1, n_npi))
-        for npi in p['npi']:
-            p_row[0, all_npi.index(npi)] = 1
-        provider_coverage[p['plan']] = p_row
-    if provider_coverage:
-        fea_mat.append(provider_coverage)
-        log.trace('complete for %d plans' %(len(provider_coverage)))
-        plan_ids = provider_coverage.keys()
+    for pid in plan_ids:
+        plan_npi = prov_col.find({'plans.plan_id':{'$eq':pid}}).distinct('npi')
+        npn = len(plan_npi)
+        if npn==0:
+            log.warning('no provider found for flan %s' %pid)
+            provider_coverage[pid] = csr_matrix((1, n_npi))
+        else:
+            col = np.where(np.in1d(all_npi, plan_npi, assume_unique=True))[0]
+            provider_coverage[pid] = csr_matrix(([1]*npn, ([0]*npn, col)), shape=(1, n_npi))
+    fea_mat.append(provider_coverage)
+    log.trace('complete for %d plans' %(len(provider_coverage)))
 
     log.trace('get summary feature for provider')
     all_provider_states = getProviderAllStates(prov_col, plan_ids)
@@ -29,14 +31,17 @@ def extract_provider_feature(prov_col, plan_ids, log):
 
     log.trace('extract provider sumstat for each plan')
     provider_sumstat = {}
-    for p in getProviderStateForPlans(prov_col, plan_ids):
-        p_row = lil_matrix((1, n_prov))
-        for d in p['plan_states']:
-            p_row[0, all_provider_states.index(d['key'])] = d['count'] #[d['count'], d['location']]
-        provider_sumstat[p['_id']] = p_row
-    if provider_sumstat:
-        fea_mat.append(provider_sumstat)
-        log.trace('complete for %d plans' %(len(provider_sumstat)))
-        plan_ids = provider_sumstat.keys()
-
+    for pid in plan_ids:
+        p_states = getProviderStateForOnePlan(prov_col, pid)
+        n_ps = len(p_states)
+        if n_ps == 0:
+            log.warning('no provider state found for plan %s' %pid)
+            provider_sumstat[pid] = csr_matrix((1, n_prov))
+        else:
+            data, spec = [p['count'] for p in p_states], [p['key'] for p in p_states]
+            col = np.where(np.in1d(all_provider_states, spec, assume_unique=True))[0]
+            provider_sumstat[pid] = csr_matrix((data, ([0]*n_ps, col)), shape=(1, n_prov))
+    fea_mat.append(provider_sumstat)
+    log.trace('complete for %d plans' %(len(provider_sumstat)))
+    
     return fea_mat, plan_ids

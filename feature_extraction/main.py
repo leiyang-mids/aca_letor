@@ -9,7 +9,7 @@ def main():
     '''
     main procedure to extract features for all states
     '''
-    log, s3clnt, s3folder = logger('feature'), s3_helper(), 'feature'
+    log, s3clnt, s3folder = logger('feature'), s3_helper(), 'feature_u'
     for f in ['log', s3folder]:
         if not os.path.exists(f):
             os.makedirs(f)

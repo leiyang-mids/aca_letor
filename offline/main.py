@@ -13,7 +13,7 @@ def main():
 	'''
 	'''
 	next_run, hour, minute = datetime.now(), 3, 18
-	s3_fea, test = 'feature_1', False
+	s3_fea, test = 'feature_u', False
 	log, ready = logger('training'), do_setup(s3_fea)
 
 	while ready:

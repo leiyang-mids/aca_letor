@@ -7,7 +7,7 @@ def do_setup(feature):
 
     try:
         # create folder
-        for f in ['training','online','log']+[feature]:
+        for f in ['training_u','online_u','log']+[feature]:
             if not os.path.exists(f):
                 os.makedirs(f)
         # download feature pickles

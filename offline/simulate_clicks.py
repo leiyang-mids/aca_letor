@@ -9,7 +9,7 @@ def simulate_clicks(n_query = 8, n_click_max = 8):
         all_plan = pickle.load(f)
 
     # sim health
-    sim_health = np.array(['Alzheimer', 'Glaucoma', 'Hypertension', 'Obesophobia', 'diabetes'])
+    sim_health = np.array(['Alzheimer', 'Glaucoma', 'Hypertension', 'Obesophobia', 'diabetes', 'fatigue'])
 
     # get states
     sim_data = []

@@ -12,8 +12,8 @@ from simulate_clicks import *
 def main():
 	'''
 	'''
-	next_run, hour, minute = datetime.now(), 3, 18
-	s3_fea, test = 'feature_d', False
+	next_run, hour, minute = datetime.now(), 1, 18
+	s3_fea, test = 'feature_u', True
 	log, ready = logger('training'), do_setup(s3_fea)
 
 	while ready:

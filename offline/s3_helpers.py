@@ -13,7 +13,7 @@ class s3_helper:
 
     def download_all(self, folder):
         for o in self.bucket.objects.all():
-            if o.key.startswith(folder):
+            if o.key.startswith(folder) and o.key.endswith('.pickle'):
                 self.bucket.download_file(o.key, o.key)
 
     def upload(self, key):

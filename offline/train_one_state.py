@@ -18,13 +18,12 @@ def train_one_state(click_data, state, log, s3_fea):
         log.warning('no feature file found for state %s, skip training.' %state)
         return
     # exclude missing plan IDs in ES
-    with open('missing.pickle') as f:
-        missing = pickle.load(f)
+    # with open('missing.pickle') as f:
+    #     missing = pickle.load(f)
     # upload the stuff to S3
     save_training = 'training_d/%s_%d.pickle' %(state, len(letor_rank))
     with open(save_training, 'w') as f:
-
-        pickle.dump([[p for p in plans if p not in missing], letor_rank[[p not in missing for p in plans]]], f)
+        pickle.dump([plans, letor_rank], f)
     s3clnt.delete_by_state('training_d/%s' %(state))
     s3clnt.upload(save_training)
     save_online = 'online_d/%s_runtime.pickle' %(state)

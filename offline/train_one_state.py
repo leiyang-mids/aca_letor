@@ -27,7 +27,7 @@ def train_one_state(click_data, state, log, s3_fea):
     for i in range(len(letor_rank)):
         letor_rank[i] = np.array(letor_rank[i])[picker]
     with open(save_training, 'w') as f:
-        pickle.dump([ps, np.array(ls)], f)
+        pickle.dump([plans, letor_rank], f)
     s3clnt.delete_by_state('training/%s' %(state))
     s3clnt.upload(save_training)
     save_online = 'online/%s_runtime.pickle' %(state)

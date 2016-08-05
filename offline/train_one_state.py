@@ -22,18 +22,18 @@ def train_one_state(click_data, state, log, s3_fea):
         missing = pickle.load(f)
     pick = [p not in missing for p in plans]
     # upload the stuff to S3
-    save_training = 'training_u/%s_%d.pickle' %(state, len(letor_rank))
+    save_training = 'training_d/%s_%d.pickle' %(state, len(letor_rank))
     with open(save_training, 'w') as f:
         pickle.dump([plans[pick], letor_rank[pick]], f)
-    s3clnt.delete_by_state('training_u/%s' %(state))
+    s3clnt.delete_by_state('training_d/%s' %(state))
     s3clnt.upload(save_training)
-    save_online = 'online_u/%s_runtime.pickle' %(state)
+    save_online = 'online_d/%s_runtime.pickle' %(state)
     cen = [list(c) for c in centroids]
     voc = [None]*len(vocab)
     for k,v in vocab.items():
         voc[v] = k
     with open(save_online, 'w') as f:
         pickle.dump([voc, cen], f)
-    s3clnt.delete_by_state('online_u/%s' %(state))
+    s3clnt.delete_by_state('online_d/%s' %(state))
     s3clnt.upload(save_online)
     log.trace('ranking & online file are saved on s3')

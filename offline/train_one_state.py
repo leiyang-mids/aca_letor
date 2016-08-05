@@ -24,7 +24,7 @@ def train_one_state(click_data, state, log, s3_fea):
     save_training = 'training/%s_%d.pickle' %(state, len(letor_rank))
     picker = [p not in missing for p in plans]
     plans = np.array(plans)[picker]
-    for i in len(letor_rank):
+    for i in range(len(letor_rank)):
         letor_rank[i] = np.array(letor_rank[i])[picker]
     with open(save_training, 'w') as f:
         pickle.dump([ps, np.array(ls)], f)

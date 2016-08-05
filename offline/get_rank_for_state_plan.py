@@ -63,6 +63,6 @@ def get_rank_for_state_plan(query_cluster, click_data, log, feature_loc):
             r_weight = clf.coef_.dot(feature.T).toarray()[0]
             r_min = np.min(r_weight)
             r_range = np.max(r_weight) - r_min
-            letor_rank.append((r_weight-r_min)/r_range)
+            letor_rank.append(5*(r_weight-r_min)/r_range)
 
     return np.array(letor_rank), plans

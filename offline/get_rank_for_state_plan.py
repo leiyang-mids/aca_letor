@@ -53,7 +53,7 @@ def get_rank_for_state_plan(query_cluster, click_data, log, feature_loc):
                     tgt_vec.append(-tgt_vec[-1])
         # train SVM letor model
         if len(tgt_vec)-1<3:
-            log.trace('not enough training data for query cluster %d, return 1\'s as results' %c)
+            log.trace('not enough training data for query cluster %d, return 0\'s as results' %c)
             letor_rank.append(np.zeros(n_plan))
         else:
             log.trace('start training with %d pair features with %d +1' %(len(tgt_vec)-1, sum(np.array(tgt_vec)==1)))
